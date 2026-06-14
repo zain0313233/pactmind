@@ -1,7 +1,9 @@
 import Stripe from "stripe"
 import { prisma } from "@/lib/prisma"
-import type { Plan } from "@prisma/client"
 import type { UpgradeablePlan } from "@/lib/billing/planConfig"
+import { normalizeStripePriceId } from "@/lib/billing/plan-utils"
+
+export { priceIdToPlan } from "@/lib/billing/plan-utils"
 
 function requireEnv(name: string): string {
   const value = process.env[name]
@@ -29,7 +31,7 @@ export function planToPriceId(plan: UpgradeablePlan): string {
       ? requireEnv("STRIPE_PRO_PRICE_ID")
       : requireEnv("STRIPE_PRO_PLUS_PRICE_ID")
 
-  const priceId = raw.trim().replace(/^["']|["']$/g, "")
+  const priceId = normalizeStripePriceId(raw)
 
   if (priceId.startsWith("prod_")) {
     throw new Error(
@@ -44,12 +46,6 @@ export function planToPriceId(plan: UpgradeablePlan): string {
   }
 
   return priceId
-}
-
-export function priceIdToPlan(priceId: string): Plan {
-  if (priceId === process.env.STRIPE_PRO_PRICE_ID) return "PRO"
-  if (priceId === process.env.STRIPE_PRO_PLUS_PRICE_ID) return "PRO_PLUS"
-  return "FREE"
 }
 
 export async function getOrCreateStripeCustomer(

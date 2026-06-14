@@ -3,6 +3,7 @@ import { requirePortalAccess } from "@/lib/auth-session"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUsage } from "@/lib/billing/checkUsage"
 import { PLAN_LIMITS } from "@/lib/billing/planConfig"
+import { effectivePlanForUser } from "@/lib/billing/plan-utils"
 import { CACHE } from "@/lib/cache-headers"
 
 export async function GET(req: NextRequest) {
@@ -15,11 +16,13 @@ export async function GET(req: NextRequest) {
     }
 
     const usage = await getCurrentUsage(user.id)
-    const limits = PLAN_LIMITS[dbUser.plan]
+    const effectivePlan = effectivePlanForUser(dbUser)
+    const limits = PLAN_LIMITS[effectivePlan]
 
     return NextResponse.json(
       {
         plan: dbUser.plan,
+        effectivePlan,
         subscriptionStatus: dbUser.subscriptionStatus,
         usage: {
           documentUploads: usage.documentUploads,

@@ -45,10 +45,26 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     throw new Error("checkout.session.completed missing userId metadata")
   }
 
+  if (
+    session.payment_status &&
+    session.payment_status !== "paid" &&
+    session.payment_status !== "no_payment_required"
+  ) {
+    throw new Error(`Checkout session not paid: ${session.payment_status}`)
+  }
+
   const stripeCustomerId = customerId(session.customer)
   const stripeSubscriptionId = subscriptionId(session.subscription)
   if (!stripeCustomerId || !stripeSubscriptionId) {
     throw new Error("checkout.session.completed missing customer or subscription")
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } })
+  if (!user) {
+    throw new Error("Unknown userId in checkout session metadata")
+  }
+  if (user.stripeCustomerId && user.stripeCustomerId !== stripeCustomerId) {
+    throw new Error("Stripe customer does not match user record")
   }
 
   const subscription = await getStripe().subscriptions.retrieve(stripeSubscriptionId)
@@ -186,13 +202,15 @@ export async function POST(req: NextRequest) {
   const existing = await prisma.paymentEvent.findUnique({
     where: { eventId: event.id },
   })
-  if (existing) {
+  if (existing?.processed) {
     return new Response("Already processed", { status: 200 })
   }
 
-  await prisma.paymentEvent.create({
-    data: { eventId: event.id, type: event.type },
-  })
+  if (!existing) {
+    await prisma.paymentEvent.create({
+      data: { eventId: event.id, type: event.type },
+    })
+  }
 
   try {
     switch (event.type) {
@@ -219,7 +237,7 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Webhook handler failed"
     console.error("[stripe.webhook]", event.type, message)
-    return new Response(message, { status: 500 })
+    return new Response("Webhook handler failed", { status: 500 })
   }
 
   return NextResponse.json({ received: true }, { status: 200 })

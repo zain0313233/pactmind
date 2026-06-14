@@ -79,7 +79,7 @@ export function UsagePanel() {
         <p className="mt-1.5 text-sm text-muted-foreground">
           Track monthly feature usage on your{" "}
           <span className="font-medium text-foreground">
-            {PLAN_LABELS[data.plan]}
+            {PLAN_LABELS[data.effectivePlan ?? data.plan]}
           </span>{" "}
           plan. Limits reset on your billing cycle.
         </p>

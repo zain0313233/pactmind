@@ -4,6 +4,7 @@ import {
   type PlanKey,
   type UsageKey,
 } from "@/lib/billing/planConfig"
+import { effectivePlanForUser } from "@/lib/billing/plan-utils"
 
 const FEATURE_LABELS: Record<UsageKey, string> = {
   documentUploads: "document uploads",
@@ -33,7 +34,7 @@ export async function checkAndIncrementUsage(
       return { allowed: true }
     }
 
-    const plan = user.plan as PlanKey
+    const plan = effectivePlanForUser(user)
     const limit = PLAN_LIMITS[plan][feature]
 
     const usage = await tx.usage.upsert({
