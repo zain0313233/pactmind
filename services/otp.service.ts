@@ -17,7 +17,11 @@ function normalizeEmail(email: string): string {
 }
 
 export const otpService = {
-  async sendCode(email: string, purpose: OtpPurpose): Promise<void> {
+  async sendCode(
+    email: string,
+    purpose: OtpPurpose,
+    options?: { awaitEmail?: boolean }
+  ): Promise<void> {
     const normalized = normalizeEmail(email)
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000)
 
@@ -30,7 +34,9 @@ export const otpService = {
       throw new Error('Too many codes sent. Please try again later.')
     }
 
-    await otpRepository.purgeExpired()
+    void otpRepository.purgeExpired().catch((error) => {
+      console.warn('[otp] purgeExpired failed:', error instanceof Error ? error.message : error)
+    })
     await otpRepository.deleteForEmail(normalized, purpose)
 
     const code = generateOtpCode()
@@ -43,23 +49,31 @@ export const otpService = {
       expiresAt: new Date(Date.now() + OTP_TTL_MS),
     })
 
-    try {
-      await sendOtpEmail(normalized, code, purpose)
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)
+    const deliverEmail = async () => {
+      try {
+        await sendOtpEmail(normalized, code, purpose)
+      } catch (error) {
         console.warn(
-          '[dev:otp] Email delivery failed — use the code above to verify locally.',
+          `[otp] Email delivery failed for ${purpose} → ${normalized}:`,
           error instanceof Error ? error.message : error
         )
+        if (process.env.NODE_ENV === 'development') {
+          console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)
+        }
         return
       }
-      throw error
+
+      if (process.env.NODE_ENV === 'development') {
+        console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)
+      }
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)
+    if (options?.awaitEmail === false) {
+      void deliverEmail()
+      return
     }
+
+    await deliverEmail()
   },
 
   async verifyCode(
