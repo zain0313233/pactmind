@@ -1,8 +1,14 @@
 import dns from 'node:dns'
 import nodemailer from 'nodemailer'
+import type { Transporter } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 export type OtpEmailPurpose = 'verify_email' | 'reset_password'
+
+const IPV4_HOST_RE = /^\d{1,3}(\.\d{1,3}){3}$/
+
+let smtpTransporter: Transporter | null = null
+let smtpTransporterPromise: Promise<Transporter> | null = null
 
 function smtpConfig() {
   const host = process.env.SMTP_HOST
@@ -24,22 +30,59 @@ function smtpConfig() {
   }
 }
 
-/** Railway/containers often lack IPv6 egress; Gmail SMTP resolves to IPv6 first. */
-function createSmtpTransporter() {
-  return nodemailer.createTransport({
-    ...smtpConfig(),
-    lookup: (
-      hostname: string,
-      _options: dns.LookupOneOptions,
-      callback: (
-        err: NodeJS.ErrnoException | null,
-        address: string,
-        family: number
-      ) => void
-    ) => {
-      dns.lookup(hostname, { family: 4 }, callback)
-    },
-  } as SMTPTransport.Options)
+function resolveSmtpIpv4(hostname: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    dns.resolve4(hostname, (err, addresses) => {
+      if (!err && addresses.length > 0) {
+        resolve(addresses[0])
+        return
+      }
+      dns.lookup(hostname, { family: 4 }, (lookupErr, address) => {
+        if (lookupErr) reject(lookupErr)
+        else resolve(address)
+      })
+    })
+  })
+}
+
+/**
+ * Nodemailer prefers dns.resolve6() when resolve4 fails; Railway has no IPv6 egress.
+ * Resolve SMTP to IPv4 ourselves and connect by IP with TLS servername for SNI.
+ */
+async function getSmtpTransporter(): Promise<Transporter> {
+  if (smtpTransporter) return smtpTransporter
+  if (!smtpTransporterPromise) {
+    smtpTransporterPromise = (async () => {
+      const config = smtpConfig()
+      const hostname = config.host
+      let connectHost = hostname
+
+      if (!IPV4_HOST_RE.test(hostname)) {
+        try {
+          connectHost = await resolveSmtpIpv4(hostname)
+        } catch (error) {
+          console.warn(
+            `[email] Failed to resolve ${hostname} to IPv4:`,
+            error instanceof Error ? error.message : error
+          )
+        }
+      }
+
+      const transportOptions: SMTPTransport.Options = {
+        host: connectHost,
+        port: config.port,
+        secure: config.secure,
+        auth: config.auth,
+        connectionTimeout: config.connectionTimeout,
+        greetingTimeout: config.greetingTimeout,
+        socketTimeout: config.socketTimeout,
+        tls: { servername: hostname },
+      }
+      smtpTransporter = nodemailer.createTransport(transportOptions)
+      return smtpTransporter
+    })()
+  }
+  return smtpTransporterPromise
 }
 
 function fromAddress(): string {
@@ -83,7 +126,7 @@ export async function sendOtpEmail(
   }
 
   const copy = purposeCopy(purpose)
-  const transporter = createSmtpTransporter()
+  const transporter = await getSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -106,7 +149,7 @@ export async function sendOtpEmail(
 export async function sendPasswordChangedEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = createSmtpTransporter()
+  const transporter = await getSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -149,7 +192,7 @@ export async function sendAdminUnblockRequestEmail(data: {
     return
   }
 
-  const transporter = createSmtpTransporter()
+  const transporter = await getSmtpTransporter()
   const reviewUrl = adminPortalUrl('/admin/users?needsAction=1')
 
   await transporter.sendMail({
@@ -169,7 +212,7 @@ export async function sendAdminUnblockRequestEmail(data: {
 export async function sendAccessRestrictedEmail(to: string, maxStrikes: number): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = createSmtpTransporter()
+  const transporter = await getSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -187,7 +230,7 @@ export async function sendAccessRestrictedEmail(to: string, maxStrikes: number):
 export async function sendAccessRestoredEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = createSmtpTransporter()
+  const transporter = await getSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
