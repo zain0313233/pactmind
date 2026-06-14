@@ -43,7 +43,19 @@ export const otpService = {
       expiresAt: new Date(Date.now() + OTP_TTL_MS),
     })
 
-    await sendOtpEmail(normalized, code, purpose)
+    try {
+      await sendOtpEmail(normalized, code, purpose)
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)
+        console.warn(
+          '[dev:otp] Email delivery failed — use the code above to verify locally.',
+          error instanceof Error ? error.message : error
+        )
+        return
+      }
+      throw error
+    }
 
     if (process.env.NODE_ENV === 'development') {
       console.info(`[dev:otp] ${purpose} for ${normalized}: ${code}`)

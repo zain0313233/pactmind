@@ -5,6 +5,7 @@ import { documentRepository } from '@/repositories/document.repository'
 import { hasPermission } from '@/lib/rbac'
 import { assertValidQueryQuestion } from '@/lib/query-validation'
 import { aiService } from '@/services/ai.service'
+import { checkAndIncrementUsage } from '@/lib/billing/checkUsage'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
     const userId = user.id
     if (!hasPermission(user.role, 'query:ask')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const { allowed, reason } = await checkAndIncrementUsage(userId, 'portfolioSearches')
+    if (!allowed) {
+      return NextResponse.json({ error: reason }, { status: 429 })
     }
 
     const body = await req.json()

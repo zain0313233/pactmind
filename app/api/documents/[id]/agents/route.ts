@@ -5,6 +5,7 @@ import { agentRepository } from '@/repositories/agent.repository'
 import { userRepository } from '@/repositories/user.repository'
 import { hasPermission } from '@/lib/rbac'
 import { aiService } from '@/services/ai.service'
+import { checkAndIncrementUsage } from '@/lib/billing/checkUsage'
 
 export async function GET(
   req: NextRequest,
@@ -50,6 +51,11 @@ export async function POST(
     }
     if (document.status !== 'ready') {
       return NextResponse.json({ error: 'Document must be ready' }, { status: 400 })
+    }
+
+    const { allowed, reason } = await checkAndIncrementUsage(userId, 'agentRuns')
+    if (!allowed) {
+      return NextResponse.json({ error: reason }, { status: 429 })
     }
 
     await aiService.triggerAgents({

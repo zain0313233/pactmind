@@ -90,7 +90,7 @@ export async function middleware(req: NextRequest) {
     return withCommonHeaders(NextResponse.json({}, { headers: corsHeaders }), requestId)
   }
 
-  if (pathname === '/api/health') {
+  if (pathname === '/api/health' || pathname === '/api/stripe/webhook') {
     return withCommonHeaders(NextResponse.next(), requestId)
   }
 

@@ -9,8 +9,7 @@ import { normalizeTheme } from "@/lib/theme"
 
 export async function GET() {
   try {
-    await themeRepository.ensureDefault()
-    const theme = await themeRepository.get()
+    const theme = await themeRepository.getForRender()
     return NextResponse.json({ theme }, { status: 200, headers: CACHE.publicTheme })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to load theme"

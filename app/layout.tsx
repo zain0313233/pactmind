@@ -24,8 +24,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  await themeRepository.ensureDefault()
-  const theme = await themeRepository.get()
+  const theme = await themeRepository.getForRender()
 
   return (
     <html

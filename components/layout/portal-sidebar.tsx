@@ -15,6 +15,8 @@ import {
   Users,
   Activity,
   SlidersHorizontal,
+  BarChart3,
+  CreditCard,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-provider"
@@ -31,6 +33,8 @@ const workspaceNavItems = [
   { label: "Upload", href: "/dashboard/upload", icon: Upload, exact: false },
   { label: "Standards", href: "/dashboard/standards", icon: Shield, exact: false },
   { label: "Chat", href: "/chat", icon: MessageSquare, exact: false },
+  { label: "Usage", href: "/dashboard/usage", icon: BarChart3, exact: false },
+  { label: "Billing", href: "/dashboard/billing", icon: CreditCard, exact: false },
   { label: "Settings", href: "/dashboard/settings", icon: Settings, exact: false },
 ]
 

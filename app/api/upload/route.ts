@@ -5,6 +5,7 @@ import { uploadService } from '@/services/upload.service'
 import { userRepository } from '@/repositories/user.repository'
 import { hasPermission } from '@/lib/rbac'
 import { aiService } from '@/services/ai.service'
+import { checkAndIncrementUsage } from '@/lib/billing/checkUsage'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
     const userId = user.id
     if (!hasPermission(user.role, 'document:upload')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const { allowed, reason } = await checkAndIncrementUsage(userId, 'documentUploads')
+    if (!allowed) {
+      return NextResponse.json({ error: reason }, { status: 429 })
     }
 
     const formData = await req.formData()
