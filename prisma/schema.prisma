@@ -22,9 +22,14 @@ model User {
   consecutiveIrrelevantCount Int @default(0)
   unblockRequestPending Boolean @default(false)
   unblockRequestedAt DateTime?
+  stripeCustomerId   String?   @unique
+  plan               Plan      @default(FREE)
+  subscriptionStatus SubStatus @default(INACTIVE)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  subscription      Subscription?
+  usageRecords      Usage[]
   documents         Document[]
   conversations     Conversation[]
   standardTemplates StandardTemplate[]
@@ -232,6 +237,56 @@ model DocumentComparison {
 
   @@unique([documentId, templateId])
   @@index([documentId, status])
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String    @unique
+  stripePriceId        String
+  plan                 Plan
+  status               SubStatus
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+}
+
+model Usage {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  month             Int
+  year              Int
+  documentUploads   Int      @default(0)
+  chatMessages      Int      @default(0)
+  portfolioSearches Int      @default(0)
+  agentRuns         Int      @default(0)
+
+  @@unique([userId, month, year])
+}
+
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  eventId   String   @unique
+  type      String
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum Plan {
+  FREE
+  PRO
+  PRO_PLUS
+}
+
+enum SubStatus {
+  INACTIVE
+  ACTIVE
+  PAST_DUE
+  CANCELED
 }
 
 model SiteTheme {

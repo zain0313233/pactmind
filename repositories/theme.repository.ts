@@ -40,4 +40,14 @@ export const themeRepository = {
       update: {},
     })
   },
+
+  /** Loads persisted theme for SSR; falls back when the database is unreachable. */
+  getForRender: async (): Promise<SiteThemeConfig> => {
+    try {
+      await themeRepository.ensureDefault()
+      return await themeRepository.get()
+    } catch {
+      return DEFAULT_THEME
+    }
+  },
 }

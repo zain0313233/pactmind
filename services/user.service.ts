@@ -32,7 +32,11 @@ function skipEmailVerification(): boolean {
 export const userService = {
   signup: async (input: SignupInput) => {
     const existing = await userRepository.findByEmail(input.email)
-    if (existing) throw new Error('Unable to create account')
+    if (existing) {
+      throw new Error(
+        'An account with this email already exists. Sign in or verify your email.'
+      )
+    }
 
     const hashedPassword = await bcrypt.hash(input.password, 10)
     const verifyNow = skipEmailVerification()

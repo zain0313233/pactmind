@@ -51,6 +51,14 @@ export async function sendOtpEmail(
     return
   }
 
+  const host = process.env.SMTP_HOST
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASS
+  if ((!host || !user || !pass) && process.env.NODE_ENV === 'development') {
+    console.info(`[email:otp] ${purpose} → ${to}: ${code} (SMTP not configured)`)
+    return
+  }
+
   const copy = purposeCopy(purpose)
   const transporter = nodemailer.createTransport(smtpConfig())
 
