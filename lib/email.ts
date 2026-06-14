@@ -28,7 +28,15 @@ function smtpConfig() {
 function createSmtpTransporter() {
   return nodemailer.createTransport({
     ...smtpConfig(),
-    lookup: (hostname, _options, callback) => {
+    lookup: (
+      hostname: string,
+      _options: dns.LookupOneOptions,
+      callback: (
+        err: NodeJS.ErrnoException | null,
+        address: string,
+        family: number
+      ) => void
+    ) => {
       dns.lookup(hostname, { family: 4 }, callback)
     },
   } as SMTPTransport.Options)
