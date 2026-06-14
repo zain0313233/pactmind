@@ -49,7 +49,7 @@ export const userService = {
     })
 
     if (!verifyNow) {
-      await otpService.sendCode(user.email, 'verify_email')
+      await otpService.sendCode(user.email, 'verify_email', { awaitEmail: false })
     }
 
     const token = signAccessToken(user.id, user.tokenVersion)
