@@ -1,4 +1,6 @@
+import dns from 'node:dns'
 import nodemailer from 'nodemailer'
+import type SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 export type OtpEmailPurpose = 'verify_email' | 'reset_password'
 
@@ -20,6 +22,16 @@ function smtpConfig() {
     greetingTimeout: 10_000,
     socketTimeout: 15_000,
   }
+}
+
+/** Railway/containers often lack IPv6 egress; Gmail SMTP resolves to IPv6 first. */
+function createSmtpTransporter() {
+  return nodemailer.createTransport({
+    ...smtpConfig(),
+    lookup: (hostname, _options, callback) => {
+      dns.lookup(hostname, { family: 4 }, callback)
+    },
+  } as SMTPTransport.Options)
 }
 
 function fromAddress(): string {
@@ -63,7 +75,7 @@ export async function sendOtpEmail(
   }
 
   const copy = purposeCopy(purpose)
-  const transporter = nodemailer.createTransport(smtpConfig())
+  const transporter = createSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -86,7 +98,7 @@ export async function sendOtpEmail(
 export async function sendPasswordChangedEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = nodemailer.createTransport(smtpConfig())
+  const transporter = createSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -129,7 +141,7 @@ export async function sendAdminUnblockRequestEmail(data: {
     return
   }
 
-  const transporter = nodemailer.createTransport(smtpConfig())
+  const transporter = createSmtpTransporter()
   const reviewUrl = adminPortalUrl('/admin/users?needsAction=1')
 
   await transporter.sendMail({
@@ -149,7 +161,7 @@ export async function sendAdminUnblockRequestEmail(data: {
 export async function sendAccessRestrictedEmail(to: string, maxStrikes: number): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = nodemailer.createTransport(smtpConfig())
+  const transporter = createSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),
@@ -167,7 +179,7 @@ export async function sendAccessRestrictedEmail(to: string, maxStrikes: number):
 export async function sendAccessRestoredEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = nodemailer.createTransport(smtpConfig())
+  const transporter = createSmtpTransporter()
 
   await transporter.sendMail({
     from: fromAddress(),

@@ -4,6 +4,9 @@ export function normalizeDatabaseUrl(raw: string): string {
   if (!url.includes("connect_timeout=")) {
     url += url.includes("?") ? "&connect_timeout=30" : "?connect_timeout=30"
   }
+  if (url.includes("sslmode=") && !url.includes("uselibpqcompat=")) {
+    url += "&uselibpqcompat=true"
+  }
   return url
 }
 
