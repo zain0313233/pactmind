@@ -144,7 +144,7 @@ export function PortalSidebar() {
           )}
         </div>
 
-        <nav className={cn("flex-1 space-y-1 overflow-y-auto p-3", showCollapsed && "px-2")}>
+        <nav className={cn("scrollbar-hide flex-1 space-y-1 overflow-y-auto p-3", showCollapsed && "px-2")}>
           {!showCollapsed && (
             <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               My workspace
