@@ -1,5 +1,9 @@
 [build]
   command = "npm run build"
 
+# NEXT_PUBLIC_* vars are embedded in client JS by design — not leaked secrets.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_APP_URL"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
