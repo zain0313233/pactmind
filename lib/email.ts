@@ -2,10 +2,26 @@ import dns from 'node:dns'
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { Resend } from 'resend'
 
 export type OtpEmailPurpose = 'verify_email' | 'reset_password'
 
 const IPV4_HOST_RE = /^\d{1,3}(\.\d{1,3}){3}$/
+
+let resendClient: Resend | null = null
+
+function useResendApi(): boolean {
+  return Boolean(process.env.RESEND_API_KEY?.trim())
+}
+
+function getResendClient(): Resend {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY?.trim()
+    if (!apiKey) throw new Error('RESEND_API_KEY is not configured')
+    resendClient = new Resend(apiKey)
+  }
+  return resendClient
+}
 
 let smtpTransporter: Transporter | null = null
 let smtpTransporterPromise: Promise<Transporter> | null = null
@@ -86,9 +102,53 @@ async function getSmtpTransporter(): Promise<Transporter> {
 }
 
 function fromAddress(): string {
-  const email = process.env.SMTP_FROM_EMAIL ?? process.env.SMTP_USER
+  const email =
+    process.env.RESEND_FROM_EMAIL ??
+    process.env.SMTP_FROM_EMAIL ??
+    process.env.SMTP_USER
   const name = process.env.SMTP_FROM_NAME ?? 'ClauseIQ'
+  if (!email) throw new Error('Email sender address is not configured')
   return `"${name}" <${email}>`
+}
+
+type OutboundEmail = {
+  to: string
+  subject: string
+  text: string
+  html: string
+}
+
+async function sendViaResend(message: OutboundEmail): Promise<void> {
+  const { error } = await getResendClient().emails.send({
+    from: fromAddress(),
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+    html: message.html,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}
+
+async function sendViaSmtp(message: OutboundEmail): Promise<void> {
+  const transporter = await getSmtpTransporter()
+  await transporter.sendMail({
+    from: fromAddress(),
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+    html: message.html,
+  })
+}
+
+async function sendEmail(message: OutboundEmail): Promise<void> {
+  if (useResendApi()) {
+    await sendViaResend(message)
+    return
+  }
+  await sendViaSmtp(message)
 }
 
 function purposeCopy(purpose: OtpEmailPurpose) {
@@ -120,16 +180,18 @@ export async function sendOtpEmail(
   const host = process.env.SMTP_HOST
   const user = process.env.SMTP_USER
   const pass = process.env.SMTP_PASS
-  if ((!host || !user || !pass) && process.env.NODE_ENV === 'development') {
-    console.info(`[email:otp] ${purpose} → ${to}: ${code} (SMTP not configured)`)
+  if (
+    !useResendApi() &&
+    (!host || !user || !pass) &&
+    process.env.NODE_ENV === 'development'
+  ) {
+    console.info(`[email:otp] ${purpose} → ${to}: ${code} (email not configured)`)
     return
   }
 
   const copy = purposeCopy(purpose)
-  const transporter = await getSmtpTransporter()
 
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
     subject: copy.subject,
     text: `${copy.body} ${code}\n\nThis code expires in 10 minutes. If you did not request this, you can ignore this email.`,
@@ -149,10 +211,7 @@ export async function sendOtpEmail(
 export async function sendPasswordChangedEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
     subject: 'Your ClauseIQ password was changed',
     text: 'Your ClauseIQ password was changed successfully. If this was not you, contact support immediately.',
@@ -192,11 +251,9 @@ export async function sendAdminUnblockRequestEmail(data: {
     return
   }
 
-  const transporter = await getSmtpTransporter()
   const reviewUrl = adminPortalUrl('/admin/users?needsAction=1')
 
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to: data.adminEmail,
     subject: `[ClauseIQ] Unblock request — ${data.userEmail}`,
     text: `${data.userName ?? data.userEmail} requested portal access restoration. Review: ${reviewUrl}`,
@@ -212,10 +269,7 @@ export async function sendAdminUnblockRequestEmail(data: {
 export async function sendAccessRestrictedEmail(to: string, maxStrikes: number): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
     subject: 'ClauseIQ access temporarily restricted',
     text: `Your ClauseIQ portal access was restricted after ${maxStrikes} consecutive off-topic ClauseMind messages. Log in and use "Request unblock" for admin review.`,
@@ -230,10 +284,7 @@ export async function sendAccessRestrictedEmail(to: string, maxStrikes: number):
 export async function sendAccessRestoredEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
     subject: 'ClauseIQ access restored',
     text: 'Your ClauseIQ portal access has been restored. Please use ClauseMind for contract-related questions only.',
