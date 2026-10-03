@@ -45,7 +45,7 @@ export function PortalLayout({
             className={
               fullBleed
                 ? "flex flex-1 flex-col overflow-hidden"
-                : "flex-1 overflow-auto p-4 md:p-6"
+                : "scrollbar-hide flex-1 overflow-auto p-4 md:p-6"
             }
           >
             {children}

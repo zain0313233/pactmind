@@ -3,7 +3,7 @@ import { Scale } from "lucide-react"
 import { ResetPasswordForm } from "@/components/auth/reset-password-form"
 
 export const metadata = {
-  title: "Reset Password — ClauseIQ",
+  title: "Reset Password — PactMind",
 }
 
 export default function ResetPasswordPage() {
@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <Scale className="h-5 w-5" />
         </div>
-        ClauseIQ
+        PactMind
       </Link>
 
       <div className="relative z-10 w-full max-w-md">

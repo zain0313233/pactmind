@@ -49,7 +49,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 
 import { cn } from "@/lib/utils"
 
@@ -299,7 +299,7 @@ export function DocumentAnalysisPanel({ documentId }: { documentId: string }) {
 
       if (!res.ok) throw new Error(data.error)
 
-      toast.success("ClauseMind analysis started")
+      toast.success("PactMind analysis started")
 
       await fetchData()
 
@@ -417,7 +417,7 @@ export function DocumentAnalysisPanel({ documentId }: { documentId: string }) {
 
           <p className="mt-1.5 text-sm text-muted-foreground">
 
-            {CLAUSEMIND_NAME} contract review workspace
+            {PACTMIND_NAME} contract review workspace
 
           </p>
 
@@ -473,7 +473,7 @@ export function DocumentAnalysisPanel({ documentId }: { documentId: string }) {
 
             <Loader2 className="mb-3 h-8 w-8 animate-spin text-primary" />
 
-            <p className="text-sm font-medium">{CLAUSEMIND_NAME} is analyzing this contract…</p>
+            <p className="text-sm font-medium">{PACTMIND_NAME} is analyzing this contract…</p>
 
             <p className="mt-1 text-xs text-muted-foreground">
 

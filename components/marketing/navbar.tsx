@@ -20,7 +20,7 @@ export function MarketingNavbar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Scale className="h-4 w-4" />
           </div>
-          ClauseIQ
+          PactMind
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

@@ -24,7 +24,7 @@ export function Hero() {
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Understand contracts{" "}
-            <span className="text-primary">10x faster</span> with ClauseIQ
+            <span className="text-primary">10x faster</span> with PactMind
           </h1>
 
           <p className="max-w-lg text-lg text-muted-foreground">

@@ -1,4 +1,4 @@
-import type { QueryConfidence, QuerySource } from "@/lib/clausemind"
+import type { QueryConfidence, QuerySource } from "@/lib/pactmind"
 
 export type ChatMessage = {
   id: string

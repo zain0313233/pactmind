@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold">Platform overview</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            All users, documents, and activity across ClauseIQ
+            All users, documents, and activity across PactMind
           </p>
         </div>
         <Button

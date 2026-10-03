@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Scale } from "lucide-react"
 
 export const metadata = {
-  title: "Sign In — ClauseIQ",
+  title: "Sign In — PactMind",
 }
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Scale className="h-5 w-5" />
             </div>
-            <span className="text-lg font-semibold text-[#0F172A]">ClauseIQ</span>
+            <span className="text-lg font-semibold text-[#0F172A]">PactMind</span>
           </Link>
         </div>
 

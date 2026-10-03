@@ -23,12 +23,12 @@ import { ChatInbox } from "./chat-inbox"
 import { ChatMessageBubble } from "./chat-message"
 import { ChatInput } from "./chat-input"
 import {
-  CLAUSEMIND_NAME,
-  CLAUSEMIND_TAGLINE,
-  CLAUSEMIND_WELCOME,
+  PACTMIND_NAME,
+  PACTMIND_TAGLINE,
+  PACTMIND_WELCOME,
   type QueryConfidence,
   type QuerySource,
-} from "@/lib/clausemind"
+} from "@/lib/pactmind"
 import { streamDocumentQuery } from "@/lib/query-stream"
 import { useAuth } from "@/contexts/auth-provider"
 import {
@@ -49,7 +49,7 @@ const WELCOME_MESSAGE = (title: string): ChatMessage => ({
   id: "welcome",
   role: "assistant",
   type: "text",
-  content: CLAUSEMIND_WELCOME(title),
+  content: PACTMIND_WELCOME(title),
   time: new Date().toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -103,14 +103,14 @@ export function ChatWorkspace({ initialDocumentId }: ChatWorkspaceProps) {
   const splitRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const stored = localStorage.getItem("clauseiq-inbox-collapsed")
+    const stored = localStorage.getItem("pactmind-inbox-collapsed")
     if (stored === "true") setInboxCollapsed(true)
     setInboxHydrated(true)
   }, [])
 
   useEffect(() => {
     if (!inboxHydrated) return
-    localStorage.setItem("clauseiq-inbox-collapsed", String(inboxCollapsed))
+    localStorage.setItem("pactmind-inbox-collapsed", String(inboxCollapsed))
   }, [inboxCollapsed, inboxHydrated])
 
   const toggleInbox = useCallback(() => {
@@ -403,7 +403,7 @@ export function ChatWorkspace({ initialDocumentId }: ChatWorkspaceProps) {
           Chat
         </h1>
         <p className="mt-1 text-sm leading-normal text-muted-foreground">
-          {CLAUSEMIND_NAME} — {CLAUSEMIND_TAGLINE}. Select a contract to start.
+          {PACTMIND_NAME} — {PACTMIND_TAGLINE}. Select a contract to start.
         </p>
       </div>
 
@@ -480,7 +480,7 @@ export function ChatWorkspace({ initialDocumentId }: ChatWorkspaceProps) {
                       </p>
                       <p className="text-[11px] leading-tight text-primary-foreground/75">
                         {selectedDoc.status === "ready"
-                          ? `Ready · ${CLAUSEMIND_NAME} active`
+                          ? `Ready · ${PACTMIND_NAME} active`
                           : selectedDoc.status === "processing"
                             ? "Processing document…"
                             : selectedDoc.status}
@@ -516,7 +516,7 @@ export function ChatWorkspace({ initialDocumentId }: ChatWorkspaceProps) {
                         </div>
                         <div className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card px-3.5 py-2.5 text-sm text-muted-foreground">
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          {CLAUSEMIND_NAME} is analyzing…
+                          {PACTMIND_NAME} is analyzing…
                         </div>
                       </div>
                     )}
@@ -583,7 +583,7 @@ function EmptyChatState() {
         <p className="text-sm font-semibold">Select a document</p>
         <p className="mt-1 max-w-xs text-xs leading-relaxed text-muted-foreground">
           Choose a contract from the inbox to start a conversation with{" "}
-          {CLAUSEMIND_NAME}
+          {PACTMIND_NAME}
         </p>
       </div>
       <Link

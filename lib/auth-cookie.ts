@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export const AUTH_COOKIE_NAME = 'clauseiq_session'
+export const AUTH_COOKIE_NAME = 'pactmind_session'
 
 export function getSessionMaxAgeSeconds(): number {
   const raw = process.env.JWT_EXPIRES_IN || '1d'

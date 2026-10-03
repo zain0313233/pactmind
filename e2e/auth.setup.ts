@@ -14,7 +14,7 @@ setup("authenticate", async ({ request }) => {
 
   if (!email || !password) {
     throw new Error(
-      "Set PLAYWRIGHT_TEST_EMAIL and PLAYWRIGHT_TEST_PASSWORD in clauseiq/.env"
+      "Set PLAYWRIGHT_TEST_EMAIL and PLAYWRIGHT_TEST_PASSWORD in pactmind/.env"
     )
   }
 

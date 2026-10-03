@@ -25,7 +25,7 @@ const USAGE_ITEMS: { key: UsageKey; label: string; description: string }[] = [
   {
     key: "chatMessages",
     label: "Chat messages",
-    description: "ClauseMind questions across your documents",
+    description: "PactMind questions across your documents",
   },
   {
     key: "portfolioSearches",

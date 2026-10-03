@@ -1,7 +1,7 @@
 import { platformSettingsRepository } from '@/repositories/platform-settings.repository'
 import {
   APPEAL_SLA_TEXT,
-  CLAUSEMIND_USAGE_POLICY,
+  PACTMIND_USAGE_POLICY,
   STRIKE_POLICY_SUMMARY,
   strikeWarningMessage,
 } from '@/lib/access-policy'
@@ -9,7 +9,7 @@ import {
 export const ACCESS_RESTRICTED_CODE = 'ACCESS_RESTRICTED'
 
 export const ACCESS_RESTRICTED_MESSAGE =
-  'Your access has been temporarily restricted because ClauseMind detected repeated off-topic use. Request an admin review from the dialog below to restore access.'
+  'Your access has been temporarily restricted because PactMind detected repeated off-topic use. Request an admin review from the dialog below to restore access.'
 
 export function buildRestrictedOverlayMessage(
   maxStrikes: number,
@@ -17,7 +17,7 @@ export function buildRestrictedOverlayMessage(
 ): string {
   return [
     ACCESS_RESTRICTED_MESSAGE,
-    CLAUSEMIND_USAGE_POLICY,
+    PACTMIND_USAGE_POLICY,
     STRIKE_POLICY_SUMMARY(maxStrikes),
     APPEAL_SLA_TEXT(appealSlaDays),
   ].join(' ')

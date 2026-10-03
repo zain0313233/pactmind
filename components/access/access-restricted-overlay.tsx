@@ -69,7 +69,7 @@ export function AccessRestrictedOverlay({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Your access was temporarily restricted after repeated off-topic ClauseMind
+            Your access was temporarily restricted after repeated off-topic PactMind
             messages. Request an admin review to restore access.
           </p>
           {policy && (

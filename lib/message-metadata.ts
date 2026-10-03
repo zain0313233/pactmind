@@ -1,4 +1,4 @@
-import type { QuerySource } from '@/lib/clausemind'
+import type { QuerySource } from '@/lib/pactmind'
 
 type StoredSource = {
   chunkIndex: number

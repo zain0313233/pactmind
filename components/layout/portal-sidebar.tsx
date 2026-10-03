@@ -124,7 +124,7 @@ export function PortalSidebar() {
             )}
           >
             <p className="whitespace-nowrap text-sm font-semibold leading-tight tracking-tight">
-              ClauseIQ
+              PactMind
             </p>
             <p className="mt-0.5 whitespace-nowrap text-[11px] leading-tight text-muted-foreground">
               Legal AI Portal

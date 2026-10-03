@@ -123,10 +123,10 @@ export function applyThemeToDocument(theme: SiteThemeConfig) {
 
   Object.entries(light).forEach(([k, v]) => root.style.setProperty(k, v))
 
-  let darkEl = document.getElementById("clauseiq-dark-theme-vars")
+  let darkEl = document.getElementById("pactmind-dark-theme-vars")
   if (!darkEl) {
     darkEl = document.createElement("style")
-    darkEl.id = "clauseiq-dark-theme-vars"
+    darkEl.id = "pactmind-dark-theme-vars"
     document.head.appendChild(darkEl)
   }
 

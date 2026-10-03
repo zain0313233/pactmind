@@ -112,7 +112,7 @@ export function ThemeCustomizer() {
         </CardTitle>
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           {canEditTheme
-            ? "Customize colors for the entire ClauseIQ site — marketing pages, portal, buttons, and text. Saved to database for all visitors."
+            ? "Customize colors for the entire PactMind site — marketing pages, portal, buttons, and text. Saved to database for all visitors."
             : "Preview theme colors locally. Only administrators can save site-wide theme changes."}
         </p>
       </CardHeader>

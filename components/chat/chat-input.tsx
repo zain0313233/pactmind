@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import { Paperclip, Mic, Send, Square, X } from "lucide-react"
-import { CHAT_LEGAL_DISCLAIMER, CLAUSEMIND_USAGE_POLICY } from "@/lib/access-policy"
+import { CHAT_LEGAL_DISCLAIMER, PACTMIND_USAGE_POLICY } from "@/lib/access-policy"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -217,7 +217,7 @@ export function ChatInput({
       )}
 
       <p className="mt-2 text-center text-[10px] leading-relaxed text-muted-foreground">
-        {CLAUSEMIND_USAGE_POLICY} {CHAT_LEGAL_DISCLAIMER}
+        {PACTMIND_USAGE_POLICY} {CHAT_LEGAL_DISCLAIMER}
       </p>
     </div>
   )

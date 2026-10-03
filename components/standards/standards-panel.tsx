@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 import { cn } from "@/lib/utils"
 import {
   useDeleteTemplateMutation,
@@ -80,7 +80,7 @@ export function StandardsPanel() {
           Standard templates
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          Upload gold-standard contracts. {CLAUSEMIND_NAME} compares new documents
+          Upload gold-standard contracts. {PACTMIND_NAME} compares new documents
           against them and flags deviations.
         </p>
       </div>

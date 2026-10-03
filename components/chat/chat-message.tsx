@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Mic, Play, ChevronDown, ChevronUp, BookOpen } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 import { isStreamStatusText } from "@/lib/streaming-chat-reply"
 import { cn } from "@/lib/utils"
 import type { ChatMessage } from "./types"
@@ -48,7 +48,7 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
         {!isUser && (
           <div className="flex items-center gap-2 px-0.5">
             <span className="text-[10px] font-medium text-primary">
-              {CLAUSEMIND_NAME}
+              {PACTMIND_NAME}
             </span>
             {message.confidence && (
               <Badge

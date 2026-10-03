@@ -551,7 +551,7 @@ function EmptyState() {
       </div>
       <p className="text-sm font-semibold text-foreground">No documents yet</p>
       <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-muted-foreground">
-        Upload your first contract to start analyzing clauses with ClauseIQ AI
+        Upload your first contract to start analyzing clauses with PactMind AI
       </p>
       <Link
         href="/dashboard/upload"
