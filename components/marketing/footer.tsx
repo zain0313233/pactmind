@@ -9,10 +9,10 @@ export function Footer() {
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Scale className="h-3.5 w-3.5" />
           </div>
-          ClauseIQ
+          PactMind
         </div>
         <p className="text-sm text-muted-foreground">
-          © 2026 ClauseIQ. AI-powered legal document analysis.
+          © 2026 PactMind. AI-powered legal document analysis.
         </p>
         <div className="flex gap-6 text-sm text-muted-foreground">
           <Link href="/login" className="hover:text-foreground">

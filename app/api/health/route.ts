@@ -17,7 +17,7 @@ export async function GET() {
   return NextResponse.json(
     {
       status: healthy ? 'healthy' : 'degraded',
-      service: 'clauseiq-web',
+      service: 'pactmind-web',
       checks,
     },
     {

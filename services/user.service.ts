@@ -49,7 +49,8 @@ export const userService = {
     })
 
     if (!verifyNow) {
-      await otpService.sendCode(user.email, 'verify_email', { awaitEmail: false })
+      // Must await on serverless (Netlify); background send is killed after the response.
+      await otpService.sendCode(user.email, 'verify_email')
     }
 
     const token = signAccessToken(user.id, user.tokenVersion)

@@ -8,7 +8,7 @@ export function ThemeDarkStyles({ theme }: { theme: SiteThemeConfig }) {
 
   return (
     <style
-      id="clauseiq-dark-theme-vars"
+      id="pactmind-dark-theme-vars"
       dangerouslySetInnerHTML={{ __html: css }}
     />
   )

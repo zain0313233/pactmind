@@ -1,7 +1,7 @@
 /**
  * One-time / repeatable admin bootstrap.
  *
- * Usage (from clauseiq/):
+ * Usage (from pactmind/):
  *   npx tsx scripts/seed-admin.ts
  *
  * Or with explicit values:
@@ -26,7 +26,7 @@ async function main() {
     .trim()
     .toLowerCase()
   const password = process.env.ADMIN_PASSWORD
-  const name = process.env.ADMIN_NAME ?? 'ClauseIQ Admin'
+  const name = process.env.ADMIN_NAME ?? 'PactMind Admin'
 
   if (!password) {
     console.error(

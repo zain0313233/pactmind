@@ -3,10 +3,10 @@ import { createSignedFileUrl } from '@/lib/storage'
 import { getEngineApiSecret } from '@/lib/engine-secret'
 import { logger } from '@/lib/logger'
 import type {
-  ClauseMindPortfolioResponse,
-  ClauseMindQueryResponse,
+  PactMindPortfolioResponse,
+  PactMindQueryResponse,
   QueryMode,
-} from '@/lib/clausemind'
+} from '@/lib/pactmind'
 import type { ChatHistoryTurn } from '@/lib/conversation-history'
 
 const AI_ENGINE_URL = process.env.AI_ENGINE_URL || 'http://localhost:8000'
@@ -42,7 +42,7 @@ async function assertEngineOk(response: Response, fallbackMessage: string): Prom
 
   if (response.status === 401) {
     throw new Error(
-      'AI engine authentication failed — ensure ENGINE_API_SECRET matches in clauseiq/.env and clauseIqengine/.env, then restart both servers'
+      'AI engine authentication failed — ensure ENGINE_API_SECRET matches in pactmind/.env and pactmind-engine/.env, then restart both servers'
     )
   }
 
@@ -89,7 +89,7 @@ export const aiService = {
     user_id: string
     mode?: QueryMode
     history?: ChatHistoryTurn[]
-  }): Promise<ClauseMindQueryResponse> => {
+  }): Promise<PactMindQueryResponse> => {
     const response = await fetch(`${AI_ENGINE_URL}/query/`, {
       method: 'POST',
       headers: engineHeaders(),
@@ -115,7 +115,7 @@ export const aiService = {
       ),
       confidence: body.confidence,
       irrelevant: body.irrelevant === true,
-    } as ClauseMindQueryResponse
+    } as PactMindQueryResponse
   },
 
   queryPortfolio: async (data: {
@@ -123,7 +123,7 @@ export const aiService = {
     user_id: string
     document_ids: string[]
     document_titles: Record<string, string>
-  }): Promise<ClauseMindPortfolioResponse> => {
+  }): Promise<PactMindPortfolioResponse> => {
     const response = await fetch(`${AI_ENGINE_URL}/portfolio/`, {
       method: 'POST',
       headers: engineHeaders(),

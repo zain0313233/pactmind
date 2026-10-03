@@ -78,7 +78,7 @@ export function LoginForm() {
           Welcome back
         </h2>
         <p className="text-sm text-muted-foreground">
-          Sign in to your ClauseIQ workspace
+          Sign in to your PactMind workspace
         </p>
       </div>
 

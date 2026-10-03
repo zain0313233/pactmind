@@ -25,7 +25,7 @@ export function ResetPasswordForm() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("clauseiq_reset_email")
+    const stored = sessionStorage.getItem("pactmind_reset_email")
     if (stored) setEmail(stored)
   }, [])
 
@@ -43,7 +43,7 @@ export function ResetPasswordForm() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Reset failed")
 
-      sessionStorage.removeItem("clauseiq_reset_email")
+      sessionStorage.removeItem("pactmind_reset_email")
       toast.success("Password updated. Please sign in.")
       router.push("/login")
     } catch (err) {

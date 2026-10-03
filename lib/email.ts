@@ -2,10 +2,26 @@ import dns from 'node:dns'
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
 import type SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { Resend } from 'resend'
 
 export type OtpEmailPurpose = 'verify_email' | 'reset_password'
 
 const IPV4_HOST_RE = /^\d{1,3}(\.\d{1,3}){3}$/
+
+let resendClient: Resend | null = null
+
+function useResendApi(): boolean {
+  return Boolean(process.env.RESEND_API_KEY?.trim())
+}
+
+function getResendClient(): Resend {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY?.trim()
+    if (!apiKey) throw new Error('RESEND_API_KEY is not configured')
+    resendClient = new Resend(apiKey)
+  }
+  return resendClient
+}
 
 let smtpTransporter: Transporter | null = null
 let smtpTransporterPromise: Promise<Transporter> | null = null
@@ -86,24 +102,68 @@ async function getSmtpTransporter(): Promise<Transporter> {
 }
 
 function fromAddress(): string {
-  const email = process.env.SMTP_FROM_EMAIL ?? process.env.SMTP_USER
-  const name = process.env.SMTP_FROM_NAME ?? 'ClauseIQ'
+  const email =
+    process.env.RESEND_FROM_EMAIL ??
+    process.env.SMTP_FROM_EMAIL ??
+    process.env.SMTP_USER
+  const name = process.env.SMTP_FROM_NAME ?? 'PactMind'
+  if (!email) throw new Error('Email sender address is not configured')
   return `"${name}" <${email}>`
+}
+
+type OutboundEmail = {
+  to: string
+  subject: string
+  text: string
+  html: string
+}
+
+async function sendViaResend(message: OutboundEmail): Promise<void> {
+  const { error } = await getResendClient().emails.send({
+    from: fromAddress(),
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+    html: message.html,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+}
+
+async function sendViaSmtp(message: OutboundEmail): Promise<void> {
+  const transporter = await getSmtpTransporter()
+  await transporter.sendMail({
+    from: fromAddress(),
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+    html: message.html,
+  })
+}
+
+async function sendEmail(message: OutboundEmail): Promise<void> {
+  if (useResendApi()) {
+    await sendViaResend(message)
+    return
+  }
+  await sendViaSmtp(message)
 }
 
 function purposeCopy(purpose: OtpEmailPurpose) {
   if (purpose === 'verify_email') {
     return {
-      subject: 'Verify your ClauseIQ email',
+      subject: 'Verify your PactMind email',
       title: 'Verify your email',
-      body: 'Use this code to verify your ClauseIQ account:',
+      body: 'Use this code to verify your PactMind account:',
     }
   }
 
   return {
-    subject: 'Reset your ClauseIQ password',
+    subject: 'Reset your PactMind password',
     title: 'Password reset',
-    body: 'Use this code to reset your ClauseIQ password:',
+    body: 'Use this code to reset your PactMind password:',
   }
 }
 
@@ -120,16 +180,18 @@ export async function sendOtpEmail(
   const host = process.env.SMTP_HOST
   const user = process.env.SMTP_USER
   const pass = process.env.SMTP_PASS
-  if ((!host || !user || !pass) && process.env.NODE_ENV === 'development') {
-    console.info(`[email:otp] ${purpose} → ${to}: ${code} (SMTP not configured)`)
+  if (
+    !useResendApi() &&
+    (!host || !user || !pass) &&
+    process.env.NODE_ENV === 'development'
+  ) {
+    console.info(`[email:otp] ${purpose} → ${to}: ${code} (email not configured)`)
     return
   }
 
   const copy = purposeCopy(purpose)
-  const transporter = await getSmtpTransporter()
 
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
     subject: copy.subject,
     text: `${copy.body} ${code}\n\nThis code expires in 10 minutes. If you did not request this, you can ignore this email.`,
@@ -149,17 +211,14 @@ export async function sendOtpEmail(
 export async function sendPasswordChangedEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
-    subject: 'Your ClauseIQ password was changed',
-    text: 'Your ClauseIQ password was changed successfully. If this was not you, contact support immediately.',
+    subject: 'Your PactMind password was changed',
+    text: 'Your PactMind password was changed successfully. If this was not you, contact support immediately.',
     html: `
       <div style="font-family:Inter,Segoe UI,sans-serif;max-width:480px;margin:0 auto;padding:24px;">
         <h2 style="color:#0F172A;">Password updated</h2>
-        <p style="color:#475569;">Your ClauseIQ password was changed successfully.</p>
+        <p style="color:#475569;">Your PactMind password was changed successfully.</p>
         <p style="color:#94a3b8;font-size:13px;">If this was not you, reset your password immediately.</p>
       </div>
     `,
@@ -176,7 +235,7 @@ function adminEmailShell(title: string, bodyHtml: string): string {
     <div style="font-family:Inter,Segoe UI,sans-serif;max-width:520px;margin:0 auto;padding:24px;">
       <h2 style="color:#0F172A;margin:0 0 12px;">${title}</h2>
       ${bodyHtml}
-      <p style="color:#94a3b8;font-size:13px;margin-top:24px;">ClauseIQ Platform Admin</p>
+      <p style="color:#94a3b8;font-size:13px;margin-top:24px;">PactMind Platform Admin</p>
     </div>
   `
 }
@@ -192,13 +251,11 @@ export async function sendAdminUnblockRequestEmail(data: {
     return
   }
 
-  const transporter = await getSmtpTransporter()
   const reviewUrl = adminPortalUrl('/admin/users?needsAction=1')
 
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to: data.adminEmail,
-    subject: `[ClauseIQ] Unblock request — ${data.userEmail}`,
+    subject: `[PactMind] Unblock request — ${data.userEmail}`,
     text: `${data.userName ?? data.userEmail} requested portal access restoration. Review: ${reviewUrl}`,
     html: adminEmailShell(
       'Unblock request pending',
@@ -212,16 +269,13 @@ export async function sendAdminUnblockRequestEmail(data: {
 export async function sendAccessRestrictedEmail(to: string, maxStrikes: number): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
-    subject: 'ClauseIQ access temporarily restricted',
-    text: `Your ClauseIQ portal access was restricted after ${maxStrikes} consecutive off-topic ClauseMind messages. Log in and use "Request unblock" for admin review.`,
+    subject: 'PactMind access temporarily restricted',
+    text: `Your PactMind portal access was restricted after ${maxStrikes} consecutive off-topic PactMind messages. Log in and use "Request unblock" for admin review.`,
     html: adminEmailShell(
       'Access restricted',
-      `<p style="color:#475569;">Your portal access was temporarily restricted after repeated off-topic ClauseMind usage.</p>
+      `<p style="color:#475569;">Your portal access was temporarily restricted after repeated off-topic PactMind usage.</p>
        <p style="color:#475569;">Sign in and submit an unblock request — an admin will review it.</p>`
     ),
   })
@@ -230,17 +284,14 @@ export async function sendAccessRestrictedEmail(to: string, maxStrikes: number):
 export async function sendAccessRestoredEmail(to: string): Promise<void> {
   if (process.env.PLAYWRIGHT_TEST === '1') return
 
-  const transporter = await getSmtpTransporter()
-
-  await transporter.sendMail({
-    from: fromAddress(),
+  await sendEmail({
     to,
-    subject: 'ClauseIQ access restored',
-    text: 'Your ClauseIQ portal access has been restored. Please use ClauseMind for contract-related questions only.',
+    subject: 'PactMind access restored',
+    text: 'Your PactMind portal access has been restored. Please use PactMind for contract-related questions only.',
     html: adminEmailShell(
       'Access restored',
       `<p style="color:#475569;">Your portal access has been restored by an admin.</p>
-       <p style="color:#475569;">Please use ClauseMind only for questions about your uploaded contracts.</p>`
+       <p style="color:#475569;">Please use PactMind only for questions about your uploaded contracts.</p>`
     ),
   })
 }

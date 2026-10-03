@@ -12,7 +12,7 @@ import { blockedQuerySse, isDocumentQueryAllowed } from '@/lib/query-scope'
 import { ACCESS_RESTRICTED_MESSAGE } from '@/lib/access-control'
 import { accessControlService } from '@/services/access-control.service'
 import { randomUUID } from 'crypto'
-import type { QueryConfidence, QuerySource } from '@/lib/clausemind'
+import type { QueryConfidence, QuerySource } from '@/lib/pactmind'
 import { SSE_HEADERS } from '@/lib/sse'
 import { checkAndIncrementUsage } from '@/lib/billing/checkUsage'
 

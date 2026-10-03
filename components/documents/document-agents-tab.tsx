@@ -16,7 +16,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 import { cn } from "@/lib/utils"
 import type { AgentOpinion, AgentReport } from "@/types/agents"
 
@@ -112,7 +112,7 @@ export function DocumentAgentsTab({
             <Users className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold">ClauseMind Agent Team</p>
+            <p className="text-sm font-semibold">PactMind Agent Team</p>
             <p className="text-xs text-muted-foreground">
               Four specialists review this contract in parallel
             </p>
@@ -135,7 +135,7 @@ export function DocumentAgentsTab({
           <CardContent className="flex flex-col items-center py-16 text-center">
             <Loader2 className="mb-3 h-8 w-8 animate-spin text-primary" />
             <p className="text-sm font-medium">
-              {CLAUSEMIND_NAME} agent team is reviewing…
+              {PACTMIND_NAME} agent team is reviewing…
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               Reviewer · Compliance · Finance · Executive

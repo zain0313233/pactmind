@@ -11,7 +11,7 @@ export function CTA() {
           Ready to understand your contracts?
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-primary-foreground/80">
-          Join ClauseIQ today. Upload your first document and start asking
+          Join PactMind today. Upload your first document and start asking
           questions in minutes — no credit card required.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">

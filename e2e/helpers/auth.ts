@@ -4,6 +4,6 @@ import { expect, type Page } from "@playwright/test"
 export async function waitForPortal(page: Page): Promise<void> {
   await page.goto("/dashboard")
   await expect(
-    page.getByRole("heading", { name: "Welcome to ClauseIQ" })
+    page.getByRole("heading", { name: "Welcome to PactMind" })
   ).toBeVisible({ timeout: 60_000 })
 }

@@ -5,8 +5,8 @@ import { Loader2, BookOpen } from "lucide-react"
 import { toast } from "sonner"
 import { ChatMessageBubble } from "@/components/chat/chat-message"
 import { ChatInput } from "@/components/chat/chat-input"
-import { CLAUSEMIND_NAME, CLAUSEMIND_WELCOME } from "@/lib/clausemind"
-import type { QueryMode, QueryConfidence } from "@/lib/clausemind"
+import { PACTMIND_NAME, PACTMIND_WELCOME } from "@/lib/pactmind"
+import type { QueryMode, QueryConfidence } from "@/lib/pactmind"
 import { streamDocumentQuery } from "@/lib/query-stream"
 import { useAuth } from "@/contexts/auth-provider"
 import {
@@ -48,7 +48,7 @@ export function DocumentChatTab({
       id: "welcome",
       role: "assistant",
       type: "text",
-      content: CLAUSEMIND_WELCOME(documentTitle),
+      content: PACTMIND_WELCOME(documentTitle),
       time: now(),
     },
   ])
@@ -162,7 +162,7 @@ export function DocumentChatTab({
     <div className="flex h-[min(520px,60vh)] flex-col overflow-hidden rounded-xl border border-border/60 bg-background/40">
       <div className="flex items-center justify-between border-b border-border/50 px-4 py-2.5">
         <p className="text-xs text-muted-foreground">
-          Ask {CLAUSEMIND_NAME} about this contract
+          Ask {PACTMIND_NAME} about this contract
         </p>
         <button
           type="button"
@@ -191,7 +191,7 @@ export function DocumentChatTab({
               </div>
               <div className="flex items-center gap-2 rounded-2xl border border-border/60 bg-card px-3.5 py-2.5 text-sm text-muted-foreground">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                {plainEnglish ? "Simplifying in plain English…" : `${CLAUSEMIND_NAME} is analyzing…`}
+                {plainEnglish ? "Simplifying in plain English…" : `${PACTMIND_NAME} is analyzing…`}
               </div>
             </div>
           )}

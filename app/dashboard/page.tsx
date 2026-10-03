@@ -62,10 +62,10 @@ export default function DashboardPage() {
         <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold leading-tight tracking-tight text-white">
-              Welcome to ClauseIQ
+              Welcome to PactMind
             </h1>
             <p className="mt-1.5 text-sm leading-normal text-primary-foreground/80 text-white">
-              ClauseMind analyzes your contracts — risks, summaries, and Q&amp;A
+              PactMind analyzes your contracts — risks, summaries, and Q&amp;A
             </p>
           </div>
           <Button

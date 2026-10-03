@@ -25,8 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    localStorage.removeItem("clauseiq_token")
-    localStorage.removeItem("clauseiq_user")
+    localStorage.removeItem("pactmind_token")
+    localStorage.removeItem("pactmind_user")
 
     fetch("/api/me", { credentials: "include" })
       .then(async (res) => {

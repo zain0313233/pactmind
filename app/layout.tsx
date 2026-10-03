@@ -14,7 +14,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "ClauseIQ — AI Legal Document Analysis",
+  title: "PactMind — AI Legal Document Analysis",
   description:
     "Upload contracts, ask questions, and understand legal clauses instantly with AI.",
 }

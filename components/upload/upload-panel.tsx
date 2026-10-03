@@ -126,7 +126,7 @@ export function UploadPanel() {
           Upload Document
         </h1>
         <p className="mt-1.5 text-sm leading-normal text-muted-foreground">
-          Add contracts to your library — ClauseIQ will index every clause for AI
+          Add contracts to your library — PactMind will index every clause for AI
           Q&amp;A
         </p>
       </div>

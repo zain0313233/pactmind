@@ -1,4 +1,4 @@
-import type { QueryConfidence, QueryMode, QuerySource } from '@/lib/clausemind'
+import type { QueryConfidence, QueryMode, QuerySource } from '@/lib/pactmind'
 import { consumeSseStream } from '@/lib/sse-client'
 
 export type StreamQueryHandlers = {

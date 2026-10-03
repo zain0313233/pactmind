@@ -117,7 +117,7 @@ export function AdminDocumentReviewSheet({
 
   const doc = data?.document
 
-  async function runClauseMindReview() {
+  async function runPactMindReview() {
     if (!documentId) return
     setReviewing(true)
     try {
@@ -126,7 +126,7 @@ export function AdminDocumentReviewSheet({
         review: ContentReviewResult
       }>(`/api/platform/documents/${documentId}/review`, { method: "POST" })
       setLastReview(res.review)
-      toast.success("ClauseMind content review complete")
+      toast.success("PactMind content review complete")
       void refetch()
       void queryClient.invalidateQueries({ queryKey: ["admin", "documents"] })
       onUpdated?.()
@@ -174,7 +174,7 @@ export function AdminDocumentReviewSheet({
         <SheetHeader>
           <SheetTitle className="pr-8">{doc?.title ?? "Document review"}</SheetTitle>
           <SheetDescription>
-            Preview uploaded content and run ClauseMind security / validity checks
+            Preview uploaded content and run PactMind security / validity checks
             before users consume AI tokens.
           </SheetDescription>
         </SheetHeader>
@@ -235,7 +235,7 @@ export function AdminDocumentReviewSheet({
             <div className="space-y-3">
               <Button
                 className="w-full"
-                onClick={() => void runClauseMindReview()}
+                onClick={() => void runPactMindReview()}
                 disabled={reviewing || doc.status !== "ready"}
               >
                 {reviewing ? (
@@ -243,7 +243,7 @@ export function AdminDocumentReviewSheet({
                 ) : (
                   <Shield className="mr-2 h-4 w-4" />
                 )}
-                Run ClauseMind security check
+                Run PactMind security check
               </Button>
               {doc.status !== "ready" && (
                 <p className="text-xs text-muted-foreground">
@@ -255,7 +255,7 @@ export function AdminDocumentReviewSheet({
             {notes && (
               <Card className="border-border/60">
                 <CardContent className="space-y-3 p-4 text-sm">
-                  <p className="font-medium">ClauseMind assessment</p>
+                  <p className="font-medium">PactMind assessment</p>
                   {notes.summary && (
                     <p className="text-muted-foreground">{notes.summary}</p>
                   )}
@@ -335,7 +335,7 @@ export function AdminDocumentReviewSheet({
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Blocking chat stops ClauseMind from answering on this document —
+                Blocking chat stops PactMind from answering on this document —
                 protecting AI tokens from joke or malicious uploads.
               </p>
             </div>

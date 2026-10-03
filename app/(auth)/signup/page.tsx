@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Scale } from "lucide-react"
 
 export const metadata = {
-  title: "Sign Up — ClauseIQ",
+  title: "Sign Up — PactMind",
 }
 
 export default function SignupPage() {
@@ -12,7 +12,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col-reverse lg:flex-row">
       <LoginBrandPanel
         title="Start analyzing contracts today"
-        subtitle="Create your free account and verify your email to unlock ClauseIQ"
+        subtitle="Create your free account and verify your email to unlock PactMind"
       />
 
       <div className="flex flex-1 flex-col bg-zinc-50">
@@ -21,7 +21,7 @@ export default function SignupPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Scale className="h-5 w-5" />
             </div>
-            <span className="text-lg font-semibold text-[#0F172A]">ClauseIQ</span>
+            <span className="text-lg font-semibold text-[#0F172A]">PactMind</span>
           </Link>
         </div>
 

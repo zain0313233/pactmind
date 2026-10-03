@@ -37,7 +37,7 @@ export function ForgotPasswordForm() {
       if (!res.ok) throw new Error(data.error || "Request failed")
 
       toast.success("Check your email for a reset code")
-      sessionStorage.setItem("clauseiq_reset_email", email.trim().toLowerCase())
+      sessionStorage.setItem("pactmind_reset_email", email.trim().toLowerCase())
       router.push("/reset-password")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Request failed")

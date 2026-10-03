@@ -1,8 +1,8 @@
-export const CLAUSEMIND_NAME = "ClauseMind"
-export const CLAUSEMIND_TAGLINE = "Contract intelligence by ClauseIQ"
+export const PACTMIND_NAME = "PactMind"
+export const PACTMIND_TAGLINE = "Contract intelligence by PactMind"
 
-export const CLAUSEMIND_WELCOME = (documentTitle: string) =>
-  `Hi! I'm ${CLAUSEMIND_NAME}, your contract advisor for "${documentTitle}". Ask me anything — I'll walk through the document with you, remember our conversation, and cite the exact clauses. What would you like to understand first?`
+export const PACTMIND_WELCOME = (documentTitle: string) =>
+  `Hi! I'm ${PACTMIND_NAME}, your contract advisor for "${documentTitle}". Ask me anything — I'll walk through the document with you, remember our conversation, and cite the exact clauses. What would you like to understand first?`
 
 export type QueryConfidence = "high" | "medium" | "low"
 
@@ -14,7 +14,7 @@ export type QuerySource = {
 
 export type QueryMode = "default" | "plain_english" | "conversational"
 
-export type ClauseMindQueryResponse = {
+export type PactMindQueryResponse = {
   answer: string
   sources: QuerySource[]
   confidence: QueryConfidence
@@ -31,7 +31,7 @@ export type PortfolioSource = {
   score: number
 }
 
-export type ClauseMindPortfolioResponse = {
+export type PactMindPortfolioResponse = {
   answer: string
   sources: PortfolioSource[]
   confidence: QueryConfidence

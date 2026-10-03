@@ -3,7 +3,7 @@ import { platformSettingsRepository } from '@/repositories/platform-settings.rep
 import {
   APPEAL_SLA_TEXT,
   CHAT_LEGAL_DISCLAIMER,
-  CLAUSEMIND_USAGE_POLICY,
+  PACTMIND_USAGE_POLICY,
   STRIKE_POLICY_SUMMARY,
 } from '@/lib/access-policy'
 import { CACHE } from '@/lib/cache-headers'
@@ -13,7 +13,7 @@ export async function GET() {
   return NextResponse.json(
     {
       policy: {
-        usage: CLAUSEMIND_USAGE_POLICY,
+        usage: PACTMIND_USAGE_POLICY,
         strikes: STRIKE_POLICY_SUMMARY(settings.maxConsecutiveIrrelevant),
         appealSla: APPEAL_SLA_TEXT(settings.appealSlaBusinessDays),
         disclaimer: CHAT_LEGAL_DISCLAIMER,

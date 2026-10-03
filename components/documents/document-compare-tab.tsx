@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 import { cn } from "@/lib/utils"
 import {
   TEMPLATE_TYPES,
@@ -191,7 +191,7 @@ export function DocumentCompareTab({
           <CardContent className="flex flex-col items-center py-16 text-center">
             <Loader2 className="mb-3 h-8 w-8 animate-spin text-primary" />
             <p className="text-sm font-medium">
-              {CLAUSEMIND_NAME} is comparing clause-by-clause…
+              {PACTMIND_NAME} is comparing clause-by-clause…
             </p>
           </CardContent>
         </Card>

@@ -42,7 +42,7 @@ export function LoginBrandPanel({
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/25">
           <Scale className="h-5 w-5" />
         </div>
-        <span className="text-xl font-semibold tracking-tight">ClauseIQ</span>
+        <span className="text-xl font-semibold tracking-tight">PactMind</span>
       </Link>
 
       <div className="relative z-10 my-6 max-w-md space-y-4 lg:my-12 lg:space-y-6">

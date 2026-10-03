@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { CLAUSEMIND_NAME } from "@/lib/clausemind"
+import { PACTMIND_NAME } from "@/lib/pactmind"
 import { cn } from "@/lib/utils"
-import type { PortfolioSource, QueryConfidence } from "@/lib/clausemind"
+import type { PortfolioSource, QueryConfidence } from "@/lib/pactmind"
 
 const confidenceStyles: Record<QueryConfidence, string> = {
   high: "border-emerald-500/30 text-emerald-400",
@@ -74,7 +74,7 @@ export function PortfolioSearch() {
           </h3>
         </div>
         <p className="text-xs leading-tight text-muted-foreground">
-          Ask {CLAUSEMIND_NAME} across all your contracts at once
+          Ask {PACTMIND_NAME} across all your contracts at once
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -119,14 +119,14 @@ export function PortfolioSearch() {
         {loading && (
           <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Searching {CLAUSEMIND_NAME} across your portfolio…
+            Searching {PACTMIND_NAME} across your portfolio…
           </div>
         )}
 
         {answer && !loading && (
           <div className="space-y-3 rounded-xl border border-border/50 bg-background/40 p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-primary">{CLAUSEMIND_NAME}</span>
+              <span className="text-xs font-medium text-primary">{PACTMIND_NAME}</span>
               {confidence && (
                 <Badge
                   variant="outline"

@@ -9,7 +9,7 @@ import {
   useState,
 } from "react"
 
-const STORAGE_KEY = "clauseiq-sidebar-collapsed"
+const STORAGE_KEY = "pactmind-sidebar-collapsed"
 const MOBILE_QUERY = "(max-width: 767px)"
 
 type SidebarContextValue = {

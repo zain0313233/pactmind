@@ -34,7 +34,7 @@ export function VerifyEmailPageClient() {
     <div className="flex min-h-screen flex-col-reverse lg:flex-row">
       <LoginBrandPanel
         title="Almost there"
-        subtitle="Verify your email to secure your account and access ClauseIQ"
+        subtitle="Verify your email to secure your account and access PactMind"
       />
 
       <div className="flex flex-1 flex-col bg-zinc-50">
@@ -43,7 +43,7 @@ export function VerifyEmailPageClient() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Scale className="h-5 w-5" />
             </div>
-            <span className="text-lg font-semibold text-[#0F172A]">ClauseIQ</span>
+            <span className="text-lg font-semibold text-[#0F172A]">PactMind</span>
           </Link>
         </div>
 

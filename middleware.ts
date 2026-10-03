@@ -24,6 +24,21 @@ function shouldSkipRateLimit(): boolean {
   return false
 }
 
+/**
+ * Load-testing bypass — disabled unless LOAD_TEST_BYPASS_SECRET is explicitly set
+ * (never set this in real production). Requires the caller to send a matching
+ * `x-load-test-key` header, so it fails closed by default in every environment.
+ *
+ * Only bypasses the Upstash rate limiter — per-plan usage limits, upload security
+ * scanning, and off-topic abuse detection are untouched. Pair with a dedicated
+ * Pro Plus test account for realistic capacity testing. See /load-tests/README.md.
+ */
+function loadTestBypass(req: NextRequest): boolean {
+  const secret = process.env.LOAD_TEST_BYPASS_SECRET
+  if (!secret) return false
+  return req.headers.get('x-load-test-key') === secret
+}
+
 function isAiProcessingRoute(pathname: string, method: string): boolean {
   if (method !== 'POST') return false
   if (pathname === '/api/upload') return true
@@ -70,7 +85,7 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const requestId = getOrCreateRequestId(req.headers.get(REQUEST_ID_HEADER))
   const ip = req.headers.get('x-forwarded-for') ?? '127.0.0.1'
-  const skipRateLimit = shouldSkipRateLimit()
+  const skipRateLimit = shouldSkipRateLimit() || loadTestBypass(req)
   const { user: userRateKey } = getRateLimitKeys(req, ip)
 
   let corsHeaders: Record<string, string>

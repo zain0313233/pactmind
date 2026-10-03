@@ -201,7 +201,7 @@ export const accessControlService = {
       userId,
       type: 'access_restored',
       title: 'Access restored',
-      body: 'Your portal access has been restored by an admin. Please use ClauseMind for contract-related questions only.',
+      body: 'Your portal access has been restored by an admin. Please use PactMind for contract-related questions only.',
       referenceKey: `access_restored:${userId}:${Date.now()}`,
     })
 
